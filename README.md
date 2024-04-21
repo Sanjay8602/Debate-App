@@ -12,7 +12,7 @@ Built using [Unify](https://unify.ai/docs/index.html).
 
 ## Requirements
 ```commandline
-pip install -r requirements
+pip install -r requirements.txt
 ```
 
 ## Run
