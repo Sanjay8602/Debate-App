@@ -7,11 +7,14 @@ def input_fields():
         st.session_state.unify_key = st.text_input("UNIFY KEY", type="password")
         st.session_state.llm_1 = st.selectbox(
             "Select LLM 1",
-            ["mistral-7b-instruct-v0.1@deepinfra"]  # we can add more models
+            ["mistral-7b-instruct-v0.1@deepinfra","gpt-4@deepinfra","codellama-7b-instruct@octoai",
+            "gpt-3.5-turbo@openai","pplx-70b-chat@perplexity-ai"]
+            
         )
         st.session_state.llm_2 = st.selectbox(
             "Select LLM 2",
-            ["llama-2-13b-chat@anyscale"]  # same
+            ["llama-2-13b-chat@anyscale","gemma-2b-it@together-ai","gpt-4-turbo@openai",
+            "deepseek-coder-33b-instruct@together-ai","mistral-large@mistral-ai"]  # same
         )
 
 
