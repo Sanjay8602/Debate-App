@@ -24,14 +24,14 @@ def chat_interface(prompt, llm1_endpoint, llm2_endpoint, unify_key):
         api_key=unify_key,
         endpoint=llm2_endpoint
     )
-    response1 = agent1.generate(user_prompt=prompt)
-    response2 = agent2.generate(user_prompt=prompt)
+    response1 = agent1.generate(user_prompt=prompt, stream=True)
+    response2 = agent2.generate(user_prompt=prompt, stream=True)
 
     st.write("Output from LLM 1:")
-    st.write(response1)
+    st.write_stream(response1)
 
     st.write("Output from LLM 2:")
-    st.write(response2)
+    st.write_stream(response2)
 
 
 def main():
