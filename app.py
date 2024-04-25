@@ -1,6 +1,8 @@
 import streamlit as st
 from unify import Unify
 
+st.set_page_config(page_title="Debate App built with Unify")
+
 
 def input_fields():
     with st.sidebar:
@@ -40,7 +42,6 @@ def generate_response(model, topic, position, prompt):
 
 
 def main():
-    st.set_page_config(page_title="Debate App built with Unify")
     st.title("Debate App built with Unify")
     st.text("Choose two LLMs to debate each other on a given topic.")
 
