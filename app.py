@@ -12,15 +12,15 @@ def input_fields():
             "Select LLM to debate supporting the topic",
             ["mistral-7b-instruct-v0.1@deepinfra", "gpt-4@deepinfra", "codellama-7b-instruct@octoai",
              "gpt-3.5-turbo@openai", "pplx-70b-chat@perplexity-ai"]
-
         )
         st.image("robot_icon_yellow.png", width=20)
         st.session_state.llm_2 = st.selectbox(
             "Select LLM to debate opposing the topic",
             ["llama-2-13b-chat@anyscale", "gemma-2b-it@together-ai", "gpt-4-turbo@openai",
-             "deepseek-coder-33b-instruct@together-ai", "mistral-large@mistral-ai"]  # same
+             "deepseek-coder-33b-instruct@together-ai", "mistral-large@mistral-ai"]
         )
-        st.session_state.exchange = st.number_input("number of exchanges", min_value=1, max_value=5)
+        st.session_state.exchange = st.number_input("Number of exchanges", min_value=1, max_value=5)
+        st.session_state.stop_button = st.empty()
 
 
 def initialize_model(llm_endpoint, unify_key):
@@ -59,29 +59,28 @@ def main():
         model1_messages = []
         model2_messages = []
         stop = False
-        for _i in range(st.session_state.exchange):
+        while not stop:
             with st.chat_message(name="model1", avatar="robot_icon_green.png"):
-                if stop:
-                    break
                 if len(model1_messages) == 0:
                     stream = generate_response(model1, topic, "for", [{"role": "user", "content": "start debate."}])
                 else:
                     model1_messages.append({"role": "user", "content": model2_response})
                     stream = generate_response(model1, topic, "for", model1_messages)
                 model1_response = st.write_stream(stream)
-                if st.session_state.stop_button.button("Stop Interaction"):
+                if st.session_state.stop_button.button("Stop Interaction", key=st.session_state.stop_button):
                     stop = True
             model1_messages.append({"role": "assistant", "content": model1_response})
 
-            with st.chat_message(name="model2", avatar="robot_icon_yellow.png"):
-                if stop:
-                    break
-                model2_messages.append({"role": "user", "content": model1_response})
-                stream = generate_response(model2, topic, "against", model2_messages)
-                model2_response = st.write_stream(stream)
-                if st.session_state.stop_button.button("Stop Interaction"):
-                    stop = True
-            model2_messages.append({"role": "assistant", "content": model2_response})
+            if not stop:
+                with st.chat_message(name="model2", avatar="robot_icon_yellow.png"):
+                    model2_messages.append({"role": "user", "content": model1_response})
+                    stream = generate_response(model2, topic, "against", model2_messages)
+                    model2_response = st.write_stream(stream)
+                    if st.session_state.stop_button.button("Stop Interaction", key=st.session_state.stop_button):
+                        stop = True
+                model2_messages.append({"role": "assistant", "content": model2_response})
+
+        st.session_state.stop_button.empty()
 
 
 if __name__ == "__main__":
