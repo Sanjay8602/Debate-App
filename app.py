@@ -11,14 +11,14 @@ def input_fields():
         st.session_state.llm_1 = st.selectbox(
             "Select LLM to debate supporting the topic",
             ["mistral-7b-instruct-v0.1@deepinfra", "gpt-4@deepinfra", "codellama-7b-instruct@octoai",
-             "gpt-3.5-turbo@openai", "pplx-70b-chat@perplexity-ai"]
+             "gpt-3.5-turbo@openai", "pplx-70b-chat@perplexity-ai","llama-3-8b-chat@together-ai"]
 
         )
         st.image("robot_icon_yellow.png", width=20)
         st.session_state.llm_2 = st.selectbox(
             "Select LLM to debate opposing the topic",
             ["llama-2-13b-chat@anyscale", "gemma-2b-it@together-ai", "gpt-4-turbo@openai",
-             "deepseek-coder-33b-instruct@together-ai", "mistral-large@mistral-ai"]  # same
+             "deepseek-coder-33b-instruct@together-ai", "mistral-large@mistral-ai","llama-3-8b-chat@fireworks-ai"]  # same
         )
         st.session_state.exchange = st.number_input("number of exchanges", min_value=1, max_value=5)
 
