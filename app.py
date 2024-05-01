@@ -58,29 +58,20 @@ def main():
     if topic:
         model1_messages = []
         model2_messages = []
-        stop = False
         for _i in range(st.session_state.exchange):
             with st.chat_message(name="model1", avatar="robot_icon_green.png"):
-                if stop:
-                    break
                 if len(model1_messages) == 0:
                     stream = generate_response(model1, topic, "for", [{"role": "user", "content": "start debate."}])
                 else:
                     model1_messages.append({"role": "user", "content": model2_response})
                     stream = generate_response(model1, topic, "for", model1_messages)
                 model1_response = st.write_stream(stream)
-                if st.session_state.stop_button.button("Stop Interaction"):
-                    stop = True
             model1_messages.append({"role": "assistant", "content": model1_response})
 
             with st.chat_message(name="model2", avatar="robot_icon_yellow.png"):
-                if stop:
-                    break
                 model2_messages.append({"role": "user", "content": model1_response})
                 stream = generate_response(model2, topic, "against", model2_messages)
                 model2_response = st.write_stream(stream)
-                if st.session_state.stop_button.button("Stop Interaction"):
-                    stop = True
             model2_messages.append({"role": "assistant", "content": model2_response})
 
 
