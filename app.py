@@ -65,12 +65,14 @@ def main():
         while not stop:
             if st.session_state.stop_button:
                 break
+        for _i in range(st.session_state.exchange):
             with st.chat_message(name="model1", avatar="robot_icon_green.png"):
                 if len(model1_messages) == 0:
                     stream = generate_response(model1, topic, "for", [{"role": "user", "content": "start debate."}])
                 else:
                     model1_messages.append({"role": "user", "content": st.session_state.model2_response})
                     stream = generate_response(model1, topic, "for", model1_messages)
+
                 st.session_state.model1_response = st.write_stream(stream)
             model1_messages.append({"role": "assistant", "content": st.session_state.model1_response})
 
@@ -79,6 +81,16 @@ def main():
                 stream = generate_response(model2, topic, "against", model2_messages)
                 st.session_state.model2_response = st.write_stream(stream)
             model2_messages.append({"role": "assistant", "content": st.session_state.model2_response})
+
+                model1_response = st.write_stream(stream)
+            model1_messages.append({"role": "assistant", "content": model1_response})
+
+            with st.chat_message(name="model2", avatar="robot_icon_yellow.png"):
+                model2_messages.append({"role": "user", "content": model1_response})
+                stream = generate_response(model2, topic, "against", model2_messages)
+                model2_response = st.write_stream(stream)
+            model2_messages.append({"role": "assistant", "content": model2_response})
+
 
 
 if __name__ == "__main__":
