@@ -4,6 +4,20 @@ from unify import Unify
 st.set_page_config(page_title="Debate App built with Unify")
 
 
+def start_interaction():
+    st.session_state.continue_interaction = True
+
+
+def stop_interaction():
+    st.session_state.continue_interaction = False
+
+
+def clear_history():
+    st.session_state.continue_interaction = False
+    st.session_state.model1_messages = []
+    st.session_state.model2_messages = []
+
+
 def input_fields():
     with st.sidebar:
         st.session_state.unify_key = st.text_input("UNIFY KEY", type="password")
@@ -11,16 +25,30 @@ def input_fields():
         st.session_state.llm_1 = st.selectbox(
             "Select LLM to debate supporting the topic",
             ["mistral-7b-instruct-v0.1@deepinfra", "gpt-4@deepinfra", "codellama-7b-instruct@octoai",
-             "gpt-3.5-turbo@openai", "pplx-70b-chat@perplexity-ai","llama-3-8b-chat@together-ai"]
+             "gpt-3.5-turbo@openai", "pplx-70b-chat@perplexity-ai", "llama-3-8b-chat@together-ai"]
 
         )
         st.image("robot_icon_yellow.png", width=20)
         st.session_state.llm_2 = st.selectbox(
             "Select LLM to debate opposing the topic",
             ["llama-2-13b-chat@anyscale", "gemma-2b-it@together-ai", "gpt-4-turbo@openai",
-             "deepseek-coder-33b-instruct@together-ai", "mistral-large@mistral-ai","llama-3-8b-chat@fireworks-ai"]  # same
+             "deepseek-coder-33b-instruct@together-ai", "mistral-large@mistral-ai", "llama-3-8b-chat@fireworks-ai"]
+            # same
         )
-        st.session_state.exchange = st.number_input("number of exchanges", min_value=1, max_value=5)
+        # Initialize stop button
+        if st.button("Stop debate", help="stop the debate at "
+                                         "the last complete "
+                                         "reply-response "
+                                         "cycle"):
+            stop_interaction()
+        else:
+            pass
+
+        # # Clear history
+        if st.button("Clear chat history"):
+            clear_history()
+        else:
+            pass
 
 
 def initialize_model(llm_endpoint, unify_key):
@@ -47,18 +75,34 @@ def main():
 
     input_fields()
 
-    if "messages" not in st.session_state:
-        st.session_state.messages = []
+    if 'continue_interaction' not in st.session_state:
+        st.session_state.continue_interaction = True
 
-    topic = st.text_input("Enter the debate topic here:")
+    if "model1_messages" not in st.session_state:
+        st.session_state.model1_messages = []
+
+    if "model2_messages" not in st.session_state:
+        st.session_state.model2_messages = []
+
+    with st.form(key='my_form'):
+        topic = st.text_input(label='Enter the debate topic here:')
+        submit = st.form_submit_button(label='Start debate')
+
+    if len(st.session_state.model1_messages) > 0 and len(st.session_state.model2_messages) > 0:
+        for _i, (model1_message, model2_message) in enumerate(
+                zip(st.session_state.model1_messages, st.session_state.model2_messages)):
+            with st.chat_message(name="model1", avatar="robot_icon_green.png"):
+                st.write(model1_message)
+            with st.chat_message(name="model2", avatar="robot_icon_yellow.png"):
+                st.write(model2_message)
 
     model1 = initialize_model(st.session_state.llm_1, st.session_state.unify_key)
     model2 = initialize_model(st.session_state.llm_2, st.session_state.unify_key)
-
-    if topic:
+    if submit:
+        st.session_state.continue_interaction = True
         model1_messages = []
         model2_messages = []
-        for _i in range(st.session_state.exchange):
+        while st.session_state.continue_interaction:
             with st.chat_message(name="model1", avatar="robot_icon_green.png"):
                 if len(model1_messages) == 0:
                     stream = generate_response(model1, topic, "for", [{"role": "user", "content": "start debate."}])
@@ -67,12 +111,14 @@ def main():
                     stream = generate_response(model1, topic, "for", model1_messages)
                 model1_response = st.write_stream(stream)
             model1_messages.append({"role": "assistant", "content": model1_response})
+            st.session_state.model1_messages.append(model1_response)
 
             with st.chat_message(name="model2", avatar="robot_icon_yellow.png"):
                 model2_messages.append({"role": "user", "content": model1_response})
                 stream = generate_response(model2, topic, "against", model2_messages)
                 model2_response = st.write_stream(stream)
             model2_messages.append({"role": "assistant", "content": model2_response})
+            st.session_state.model2_messages.append(model2_response)
 
 
 if __name__ == "__main__":
