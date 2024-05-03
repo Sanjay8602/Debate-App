@@ -28,12 +28,22 @@ def input_fields():
              "gpt-3.5-turbo@openai", "pplx-70b-chat@perplexity-ai", "llama-3-8b-chat@together-ai"]
 
         )
+        personas = ["factual", "funny", "silly", "serious", "angry"]
+        st.session_state.llm_1_persona = st.selectbox(
+            "Select the LLMs persona",
+            personas,
+            key="llm1_persona"
+        )
         st.image("robot_icon_yellow.png", width=20)
         st.session_state.llm_2 = st.selectbox(
             "Select LLM to debate opposing the topic",
             ["llama-2-13b-chat@anyscale", "gemma-2b-it@together-ai", "gpt-4-turbo@openai",
              "deepseek-coder-33b-instruct@together-ai", "mistral-large@mistral-ai", "llama-3-8b-chat@fireworks-ai"]
-            # same
+        )
+        st.session_state.llm_2_persona = st.selectbox(
+            "Select the LLMs persona",
+            personas,
+            key="llm2_persona"
         )
         # Initialize stop button
         if st.button("Stop debate", help="stop the debate at "
@@ -44,7 +54,7 @@ def input_fields():
         else:
             pass
 
-        # # Clear history
+        # Clear history
         if st.button("Clear chat history"):
             clear_history()
         else:
@@ -60,10 +70,11 @@ def initialize_model(llm_endpoint, unify_key):
 
 
 # Function to generate response from a model given a prompt
-def generate_response(model, topic, position, prompt):
+def generate_response(model, topic, position, persona, prompt):
     messages = [
-        {"role": "system", "content": f"You are debating {position} the following topic: {topic}, "
-                                      f"consider the opposing points and provide a response."},
+        {"role": "system", "content": f"You are debating {position} the following topic: {topic}. "
+                                      f"Consider the opposing points and provide a response. "
+                                      f"Adopt a {persona} persona when responding."},
     ]
     messages.extend(prompt)
     return model.generate(messages=messages, stream=True)
@@ -105,17 +116,18 @@ def main():
         while st.session_state.continue_interaction:
             with st.chat_message(name="model1", avatar="robot_icon_green.png"):
                 if len(model1_messages) == 0:
-                    stream = generate_response(model1, topic, "for", [{"role": "user", "content": "start debate."}])
+                    stream = generate_response(model1, topic, "for", st.session_state.llm_1_persona,
+                                               [{"role": "user", "content": "start debate."}])
                 else:
                     model1_messages.append({"role": "user", "content": model2_response})
-                    stream = generate_response(model1, topic, "for", model1_messages)
+                    stream = generate_response(model1, topic, "for", st.session_state.llm_1_persona, model1_messages)
                 model1_response = st.write_stream(stream)
             model1_messages.append({"role": "assistant", "content": model1_response})
             st.session_state.model1_messages.append(model1_response)
 
             with st.chat_message(name="model2", avatar="robot_icon_yellow.png"):
                 model2_messages.append({"role": "user", "content": model1_response})
-                stream = generate_response(model2, topic, "against", model2_messages)
+                stream = generate_response(model2, topic, "against", st.session_state.llm_2_persona, model2_messages)
                 model2_response = st.write_stream(stream)
             model2_messages.append({"role": "assistant", "content": model2_response})
             st.session_state.model2_messages.append(model2_response)
