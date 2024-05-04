@@ -10,12 +10,22 @@ Users should be able to:
 
 Built using [Unify](https://unify.ai/docs/index.html).
 
-## Requirements
-```commandline
+## Requirements for running locally
+```commandline 
+git clone https://github.com/Sanjay8602/Debate-App.git
+```
+
+```commandline 
 pip install -r requirements.txt
 ```
 
-## Run
-```commandline
+```commandline 
 streamlit run app.py
 ```
+## Contributors
+Contributors to the project:
+
+|     Name      |               GitHub Profile                   |
+|---------------|------------------------------------------------|
+| Sanjay Suthar | [Sanjay8602](https://github.com/Sanjay8602)    |
+| Ogban Ugot    | [ogbanugot](https://github.com/ogbanugot)      |
