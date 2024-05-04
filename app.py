@@ -17,6 +17,9 @@ def clear_history():
     st.session_state.model1_messages = []
     st.session_state.model2_messages = []
 
+endpoints = ["mistral-7b-instruct-v0.1@deepinfra", "gpt-4@deepinfra", "codellama-7b-instruct@octoai",
+             "gpt-3.5-turbo@openai", "pplx-70b-chat@perplexity-ai", "llama-3-8b-chat@together-ai", "llama-2-13b-chat@anyscale", "gemma-2b-it@together-ai", "gpt-4-turbo@openai",
+             "deepseek-coder-33b-instruct@together-ai", "mistral-large@mistral-ai", "llama-3-8b-chat@fireworks-ai"]
 
 def input_fields():
     with st.sidebar:
@@ -24,9 +27,9 @@ def input_fields():
         st.image("robot_icon_green.png", width=20)
         st.session_state.llm_1 = st.selectbox(
             "Select LLM to debate supporting the topic",
-            ["mistral-7b-instruct-v0.1@deepinfra", "gpt-4@deepinfra", "codellama-7b-instruct@octoai",
-             "gpt-3.5-turbo@openai", "pplx-70b-chat@perplexity-ai", "llama-3-8b-chat@together-ai"]
-
+            endpoints,
+            key="endpoints_1_llm",
+            
         )
         personas = ["factual", "funny", "silly", "serious", "angry"]
         st.session_state.llm_1_persona = st.selectbox(
@@ -34,12 +37,14 @@ def input_fields():
             personas,
             key="llm1_persona"
         )
+        
         st.image("robot_icon_yellow.png", width=20)
         st.session_state.llm_2 = st.selectbox(
             "Select LLM to debate opposing the topic",
-            ["llama-2-13b-chat@anyscale", "gemma-2b-it@together-ai", "gpt-4-turbo@openai",
-             "deepseek-coder-33b-instruct@together-ai", "mistral-large@mistral-ai", "llama-3-8b-chat@fireworks-ai"]
-        )
+            endpoints,
+            key= "endpoints_2_llm",
+            )
+        
         st.session_state.llm_2_persona = st.selectbox(
             "Select the LLMs persona",
             personas,
