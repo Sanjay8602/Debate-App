@@ -43,7 +43,8 @@ def input_fields():
             "Select LLM to debate opposing the topic",
             endpoints,
             key= "endpoints_2_llm",
-            )
+            
+        )
         
         st.session_state.llm_2_persona = st.selectbox(
             "Select the LLMs persona",
