@@ -17,8 +17,8 @@ def clear_history():
     st.session_state.model1_messages = []
     st.session_state.model2_messages = []
 
-endpoints = ["mistral-7b-instruct-v0.1@deepinfra", "gpt-4@deepinfra", "codellama-7b-instruct@octoai",
-             "gpt-3.5-turbo@openai", "pplx-70b-chat@perplexity-ai", "llama-3-8b-chat@together-ai", "llama-2-13b-chat@anyscale", "gemma-2b-it@together-ai", "gpt-4-turbo@openai",
+endpoints = ["llama-2-13b-chat@anyscale", "mistral-7b-instruct-v0.1@deepinfra", "gpt-4@deepinfra", "codellama-7b-instruct@octoai",
+             "gpt-3.5-turbo@openai", "pplx-70b-chat@perplexity-ai", "llama-3-8b-chat@together-ai", "gemma-2b-it@together-ai", "gpt-4-turbo@openai",
              "deepseek-coder-33b-instruct@together-ai", "mistral-large@mistral-ai", "llama-3-8b-chat@fireworks-ai"]
 
 def input_fields():
