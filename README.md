@@ -23,6 +23,7 @@ pip install -r requirements.txt
 ```commandline 
 streamlit run app.py
 ```
+
 ## Contributors
 Contributors to the project:
 
