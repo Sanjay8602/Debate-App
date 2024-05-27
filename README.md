@@ -25,6 +25,7 @@ streamlit run app.py
 ```
 
 ## Contributors
+
 Contributors to the project:
 
 |     Name      |               GitHub Profile                   |
